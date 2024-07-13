@@ -21,8 +21,10 @@ class ObservableDevice(Dispositivo):
 
     @property
     def observers(self) -> list[Observer]:
-        return [obs for obs in self.__observers.values()
-                if obs['registered'] is True]
+        if len(self.__observers) > 0:
+            return [obs['observer'] for obs in self.__observers.values()
+                    if obs['registered'] is True]
+        return []
 
     def __init__(self) -> None:
         super().__init__()

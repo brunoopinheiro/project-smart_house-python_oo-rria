@@ -11,6 +11,7 @@ class SisSegState(State):
 
 class SistemaSeguranca(ObservableDevice):
     def __init__(self) -> None:
+        super().__init__()
         transitions = [
             {
                 'trigger': 'armar_com_gente',

@@ -11,6 +11,7 @@ class LuzState(State):
 class Luz(ObservableDevice):
 
     def __init__(self) -> None:
+        super().__init__()
         transitions = [
             {
                 'trigger': 'ligar',
@@ -36,5 +37,6 @@ class Luz(ObservableDevice):
         return self.state
 
     def notify(self) -> None:
-        for observer in self.observers:
-            observer.notify(state=self.state)
+        if len(self.observers) > 0:
+            for observer in self.observers:
+                observer.notify(state=self.state)

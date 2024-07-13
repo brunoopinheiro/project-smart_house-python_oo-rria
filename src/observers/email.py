@@ -1,4 +1,4 @@
-from observer import Observer
+from observers.observer import Observer
 
 
 class EMail(Observer):

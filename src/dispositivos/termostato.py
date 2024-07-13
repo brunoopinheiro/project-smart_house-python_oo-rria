@@ -11,6 +11,7 @@ class TermostatoState(State):
 
 class Termostato(ObservableDevice):
     def __init__(self) -> None:
+        super().__init__()
         transitions = [
             {
                 'trigger': 'aquecer',
