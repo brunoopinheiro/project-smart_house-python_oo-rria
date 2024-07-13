@@ -1,4 +1,4 @@
-from utils.oberserver import Observer
+from observers.observer import Observer
 from abc import ABC, abstractmethod
 from enum import Enum
 
