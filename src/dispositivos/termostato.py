@@ -1,4 +1,4 @@
-from dispositivos.dispositivo import Dispositivo, State
+from dispositivos.dispositivo import ObservableDevice, State
 from transitions import Machine
 
 
@@ -9,23 +9,26 @@ class TermostatoState(State):
     ESFRIANDO = 'esfriando'
 
 
-class Termostato(Dispositivo):
+class Termostato(ObservableDevice):
     def __init__(self) -> None:
         transitions = [
             {
                 'trigger': 'aquecer',
                 'source': TermostatoState.DESLIGADO,
                 'dest': TermostatoState.AQUECENDO,
+                'after': self.notify,
             },
             {
                 'trigger': 'esfriar',
                 'source': TermostatoState.DESLIGADO,
                 'dest': TermostatoState.ESFRIANDO,
+                'after': self.notify,
             },
             {
                 'trigger': 'desligar',
                 'source': '*',
                 'dest': TermostatoState.DESLIGADO,
+                'after': self.notify,
             },
         ]
         self._machine = Machine(
@@ -37,3 +40,7 @@ class Termostato(Dispositivo):
 
     def get_state(self) -> State:
         return self.state
+
+    def notify(self) -> None:
+        for observer in self.observers:
+            observer.notify(state=self.state)

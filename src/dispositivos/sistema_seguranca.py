@@ -1,4 +1,4 @@
-from dispositivos.dispositivo import Dispositivo, State
+from dispositivos.dispositivo import ObservableDevice, State
 from transitions import Machine
 
 
@@ -9,23 +9,26 @@ class SisSegState(State):
     ARMADO_SEM_NINGUEM = 'armado_sem_ninguem'
 
 
-class SistemaSeguranca(Dispositivo):
+class SistemaSeguranca(ObservableDevice):
     def __init__(self) -> None:
         transitions = [
             {
                 'trigger': 'armar_com_gente',
                 'source': SisSegState.DESARMADO,
                 'dest': SisSegState.ARMADO_COM_GENTE,
+                'after': self.notify,
             },
             {
                 'trigger': 'armar_sem_ninguem',
                 'source': SisSegState.DESARMADO,
                 'dest': SisSegState.ARMADO_SEM_NINGUEM,
+                'after': self.notify,
             },
             {
                 'trigger': 'desarmar',
                 'source': '*',
                 'dest': SisSegState.DESARMADO,
+                'after': self.notify,
             },
         ]
         self._machine = Machine(
@@ -37,3 +40,7 @@ class SistemaSeguranca(Dispositivo):
 
     def get_state(self) -> State:
         return self.state
+
+    def notify(self) -> None:
+        for observer in self.observers:
+            observer.notify(state=self.state)
