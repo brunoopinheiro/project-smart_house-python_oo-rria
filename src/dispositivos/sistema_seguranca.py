@@ -9,7 +9,7 @@ class SisSegState(State):
     ARMADO_SEM_NINGUEM = 'armado_sem_ninguem'
 
 
-class Termostato(Dispositivo):
+class SistemaSeguranca(Dispositivo):
     def __init__(self) -> None:
         transitions = [
             {
