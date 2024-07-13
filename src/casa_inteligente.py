@@ -2,6 +2,10 @@ from __future__ import annotations
 from functools import reduce
 from observers.observer import Observer
 from dispositivos.dispositivo import ObservableDevice
+from dispositivos.dispositivo_factory import (
+    DispositivoFactory,
+    DispositivosEnum,
+)
 from dispositivos.luz import Luz, LuzState
 
 
@@ -26,17 +30,44 @@ class CasaInteligente:
         self.__devices: list[ObservableDevice] = []
         self.__observers: list[Observer] = []
 
+    def add_device(
+            self,
+            device_type: DispositivosEnum,
+            name: str,
+    ) -> None:
+        new_device = DispositivoFactory.parear_dispositivo(device_type)
+        if not hasattr(new_device, 'name'):
+            setattr(new_device, 'name', name)
+        else:
+            new_device.name = name
+        self.__devices.append(new_device)
+
     def report_status(self) -> None:
-        states = [dev.get_state() for dev in self.__devices]
-        for devstate in states:
-            print(devstate)
+        states = [(dev.name, dev.get_state()) for dev in self.__devices]
+        for name, devstate in states:
+            print(f'{name}\t\t {devstate.name}')
+
+    def get_device_names(self) -> list[str]:
+        return [dev.name for dev in self.__devices]
+
+    def __get_device_by_name(
+            self,
+            device_name: str,
+    ) -> ObservableDevice | None:
+        for dev in self.__devices:
+            if dev.name == device_name:
+                return dev
+        return None
 
     def __get_lights(self) -> list[Luz]:
         return list(filter(lambda dev: isinstance(dev, Luz), self.__devices))
 
+    def __turnon(self, dev: ObservableDevice) -> None:
+        dev.ligar()
+
     def turn_lights_on(self) -> None:
         lights = self.__get_lights()
-        map(lambda d: d.ligar(), lights)
+        map(self.__turnon, lights)
 
     def turn_lights_off(self) -> None:
         lights = self.__get_lights()
