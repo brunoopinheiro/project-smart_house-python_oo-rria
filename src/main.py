@@ -1,4 +1,6 @@
 from __future__ import annotations
+from getopt import getopt
+from sys import argv
 from casa_inteligente import CasaInteligente
 from dispositivos.dispositivo_factory import DispositivosEnum
 
@@ -21,13 +23,13 @@ class Main:
             0: 'sair',
         }
 
-    def __new__(cls) -> Main:
+    def __new__(cls, *args, **kwargs) -> Main:
         if cls.__instance is None:
             cls.__instance = super(Main, cls).__new__(cls)
         return cls.__instance
 
-    def __init__(self) -> None:
-        self.__house = CasaInteligente()
+    def __init__(self, max_devices: int = 5) -> None:
+        self.__house = CasaInteligente(max_devices)
 
     def __menu_display(self, options_dict: dict[int, str]) -> None:
         menuopts = ''
@@ -89,7 +91,6 @@ class Main:
                 device = self.__choose_device()
                 name = input('Dê um nome ao dispositivo: ')
                 self.__house.add_device(device, name)
-                print('Dispositivo pareado com sucesso.')
             elif option == 2:
                 self.__show_device_names()
             elif option == 3:
@@ -109,5 +110,14 @@ class Main:
 
 
 if __name__ == '__main__':
-    m = Main()
+    max_devices = 5
+    args_list = argv[1:]
+    try:
+        options, args = getopt(args_list, 'm:', ['max-devices='])
+    except Exception as err:
+        print('Invalid Program Execution', err)
+    for name, value in options:
+        if name in ['-m', '--max-devices']:
+            max_devices = int(value)
+    m = Main(max_devices)
     m.start()

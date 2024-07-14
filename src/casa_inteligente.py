@@ -25,6 +25,18 @@ class CasaInteligente:
         )
 
     @property
+    def total_devices(self) -> int:
+        return reduce(
+            lambda t, _: t + 1,
+            self.__devices,
+            0
+        )
+
+    @property
+    def max_devices(self) -> int:
+        return self.__max_devices
+
+    @property
     def light_control_options(self) -> dict[int, str]:
         return {
             1: 'ligar',
@@ -52,7 +64,9 @@ class CasaInteligente:
             cls.__instance = super(CasaInteligente, cls).__new__(cls)
         return CasaInteligente.__instance
 
-    def __init__(self) -> None:
+    def __init__(self, max_devices: int = 5) -> None:
+        print(max_devices)
+        self.__max_devices = max_devices
         self.__devices: list[ObservableDevice] = []
         self.__observers: list[Observer] = []
 
@@ -61,12 +75,18 @@ class CasaInteligente:
             device_type: DispositivosEnum,
             name: str,
     ) -> None:
+        if self.total_devices >= self.max_devices:
+            print(self.total_devices)
+            print(self.max_devices)
+            print('Please, remove a device before you add another.')
+            return
         new_device = DispositivoFactory.parear_dispositivo(device_type)
         if not hasattr(new_device, 'name'):
             setattr(new_device, 'name', name)
         else:
             new_device.name = name
         self.__devices.append(new_device)
+        print('Dispositivo pareado com sucesso.')
 
     def report_status(self) -> None:
         states = [(dev.name, dev.get_state()) for dev in self.__devices]
