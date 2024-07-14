@@ -101,11 +101,24 @@ class CasaInteligente:
     def __get_device_by_name(
             self,
             device_name: str,
-    ) -> ObservableDevice | None:
-        for dev in self.__devices:
+            idx: bool = False,
+    ) -> ObservableDevice | int | None:
+        for i, dev in enumerate(self.__devices):
             if dev.name == device_name:
+                if idx is True:
+                    return i
                 return dev
         return None
+
+    def remove_device_by_name(
+            self,
+            device_name: str,
+    ) -> bool:
+        dev_idx = self.__get_device_by_name(device_name, idx=True)
+        if dev_idx is None:
+            return False
+        self.__devices.pop(dev_idx)
+        return True
 
     def control_single_device(
             self,

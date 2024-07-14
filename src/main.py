@@ -17,6 +17,7 @@ class Main:
             5: 'desligar todas as luzes',
             6: 'exibir luzes acesas',
             7: 'controlar dispositivo individual',
+            8: 'remover dispositivo',
             0: 'sair',
         }
 
@@ -65,6 +66,17 @@ class Main:
             _display_func=self._get_option,
         )
 
+    def __remove_device(self) -> None:
+        print('Qual dispostivo deseja remover?')
+        self.__show_device_names()
+        print()
+        dev_name = input('>> ')
+        result = self.__house.remove_device_by_name(dev_name)
+        if result is True:
+            print(f'{dev_name} removido com sucesso.')
+        else:
+            print(f'Falha ao remover {dev_name}')
+
     def start(self) -> None:
         stopcond = False
         while not stopcond:
@@ -90,6 +102,8 @@ class Main:
                 self.__house.get_lights_on(print_result=True)
             elif option == 7:
                 self.__control_single_device()
+            elif option == 8:
+                self.__remove_device()
             else:
                 print('Opção Indisponível')
 
