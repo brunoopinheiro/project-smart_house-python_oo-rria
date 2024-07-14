@@ -15,6 +15,7 @@ class Main:
             3: 'status dos dispositivos',
             4: 'ligar todas as luzes',
             5: 'desligar todas as luzes',
+            6: 'exibir luzes acesas',
             0: 'sair',
         }
 
@@ -71,6 +72,8 @@ class Main:
                 self.__house.turn_lights_on()
             elif option == 5:
                 self.__house.turn_lights_off()
+            elif option == 6:
+                self.__house.get_lights_on(print_result=True)
             else:
                 print('Opção Indisponível')
 

@@ -62,21 +62,23 @@ class CasaInteligente:
     def __get_lights(self) -> list[Luz]:
         return list(filter(lambda dev: isinstance(dev, Luz), self.__devices))
 
-    def __turnon(self, dev: ObservableDevice) -> None:
-        dev.ligar()
-
     def turn_lights_on(self) -> None:
         lights = self.__get_lights()
-        map(self.__turnon, lights)
+        # Mesmo que o resultado do map não seja diretamente consumido,
+        # o list() é necessário para que o map execute realmente a lambda func
+        list(map(lambda x: x.ligar(), lights))
 
     def turn_lights_off(self) -> None:
         lights = self.__get_lights()
-        map(lambda d: d.desligar(), lights)
+        list(map(lambda d: d.desligar(), lights))
 
-    def get_lights_on(self) -> list[ObservableDevice]:
+    def get_lights_on(self, print_result: bool = False) -> list[Luz]:
         lights = self.__get_lights()
         lights_on = list(filter(
                 lambda lgt: lgt.state == LuzState.LIGADA,
                 lights,
             ))
+        if print_result:
+            for light in lights_on:
+                print(f'{light.name}\t\t {light.state.name}')
         return lights_on
