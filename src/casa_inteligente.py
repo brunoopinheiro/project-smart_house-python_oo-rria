@@ -65,7 +65,6 @@ class CasaInteligente:
         return CasaInteligente.__instance
 
     def __init__(self, max_devices: int = 5) -> None:
-        print(max_devices)
         self.__max_devices = max_devices
         self.__devices: list[ObservableDevice] = []
         self.__observers: list[Observer] = []
@@ -76,8 +75,6 @@ class CasaInteligente:
             name: str,
     ) -> None:
         if self.total_devices >= self.max_devices:
-            print(self.total_devices)
-            print(self.max_devices)
             print('Please, remove a device before you add another.')
             return
         new_device = DispositivoFactory.parear_dispositivo(device_type)
@@ -129,6 +126,15 @@ class CasaInteligente:
                     return i
                 return dev
         return None
+
+    def add_observer(
+        self,
+        observer: Observer,
+        device_name: str,
+    ) -> None:
+        device: ObservableDevice = self.__get_device_by_name(device_name)
+        device.register(observer)
+        self.__observers.append(observer)
 
     def remove_device_by_name(
             self,

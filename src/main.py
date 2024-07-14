@@ -3,6 +3,8 @@ from getopt import getopt
 from sys import argv
 from casa_inteligente import CasaInteligente
 from dispositivos.dispositivo_factory import DispositivosEnum
+from observers.celular import Celular
+from observers.email import EMail
 
 
 class Main:
@@ -20,6 +22,8 @@ class Main:
             6: 'exibir luzes acesas',
             7: 'controlar dispositivo individual',
             8: 'remover dispositivo',
+            9: 'adicionar celular',
+            10: 'adicionar e-mail',
             0: 'sair',
         }
 
@@ -30,6 +34,8 @@ class Main:
 
     def __init__(self, max_devices: int = 5) -> None:
         self.__house = CasaInteligente(max_devices)
+        self.__phone = None
+        self.__mail = None
 
     def __menu_display(self, options_dict: dict[int, str]) -> None:
         menuopts = ''
@@ -79,6 +85,37 @@ class Main:
         else:
             print(f'Falha ao remover {dev_name}')
 
+    def __add_phone(self) -> None:
+        print('Adicionando um Celular')
+        print('Digite o número do celular a ser cadastrado.')
+        num = input('>> ')
+        self.__phone = Celular(num)
+
+    def __add_email(self) -> None:
+        print('Adicione um e-mail para receber notificações:')
+        email = input('>> ')
+        self.__mail = EMail(email)
+
+    def __register_phone_notification(self) -> None:
+        print('Escolha o dispositivo a ser vinculado com o celular')
+        self.__show_device_names()
+        print()
+        dev_name = input('>> ')
+        self.__house.add_observer(
+            observer=self.__phone,
+            device_name=dev_name,
+        )
+
+    def __register_email_notification(self) -> None:
+        print('Escolha o dispositivo a ser vinculado com o e-mail')
+        self.__show_device_names()
+        print()
+        dev_name = input('>> ')
+        self.__house.add_observer(
+            observer=self.__mail,
+            device_name=dev_name,
+        )
+
     def start(self) -> None:
         stopcond = False
         while not stopcond:
@@ -105,6 +142,12 @@ class Main:
                 self.__control_single_device()
             elif option == 8:
                 self.__remove_device()
+            elif option == 9:
+                self.__add_phone()
+                self.__register_phone_notification()
+            elif option == 10:
+                self.__add_email()
+                self.__register_email_notification()
             else:
                 print('Opção Indisponível')
 
