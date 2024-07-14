@@ -43,19 +43,19 @@ python3 main.py
 
 _PowerShell_
 ```powershell
-python .src\main.py
+python .\src\main.py
 ```
 
 Por padrão, a casa inteligente é inicializada com um limite de 5 dispositivos. Para alterar o limite de dispositivos, use o argumento `-m` ou `--max-devices`:
 
 _Bash_
 ```bash
-python3 main.py -m 10
+python3 .\src\main.py -m 10
 ```
 
 _PowerShell_
 ```powershell
-python .src\main.py --max-devices 10
+python .\src\main.py --max-devices 10
 ```
 
 **5. Não esqueça de desativar o ambiente virutal:**
