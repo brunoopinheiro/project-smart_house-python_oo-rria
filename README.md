@@ -1,6 +1,11 @@
 # project-smart_house-python_oo-rria
 Projeto feito como avaliação parcial da disciplina de Python (Orientação a Objetos) da Pós Graduação em Robótica e Inteligência Artificial do CIn-UFPE | Softex
 
+## Visão Geral do Projeto
+O projeto consiste de uma representação simplificada de um sistema de gerenciamento de **Casa Inteligente**. O sistema suporta três tipos de dispositivo [Luz](src/devices/light.py), [Termostato](src/devices/thermostat.py) e [Sistema de Segurança](src/devices/security_system.py). Cada dispositivo possui uma máquina de estados que descreve o comportamento do dispositivo, e controla suas mudanças de estado. O sistema também suporta a adição e remoção de dispositivos dinamicamente.
+Além disso, o sistema implementa os padrões de projeto _Singleton_ (tanto na classe `Main` que implementa a interface de linha de comando, quanto na `CasaInteligente`, que gerencia os dispositivos), _Factory_ (na classe `DispositivoFactory` para a criação das instâncias dos dispositivos na casa) e _Observer_ (entre os dispositivos inteligentes, que herdam da classe `Observable Device` e os dispositivos que herdam de `Observer` que foram implementados somente como simplificações de `Celular` e `EMail`), e aplica técnicas de programação funcional, como compreensões de listas, `map`, `filter`, e `reduce` para lidar com os dispostivos adicionados na casa.
+Vale ressaltar que o sistema foi implementado com a biblioteca `transitions` para gerenciar as máquinas de estados dos dispositivos. E algumas das decisões de implementação foram tomadas para exercitar os conceitos vistos em sala de aula, e não necessariamente representam a melhor solução para um sistema de casa inteligente real.
+
 ## Executando o Projeto Localmente:
 Para executar o projeto localmente, siga os passos abaixo:
 **1. Crie um ambiente virtual com `venv`:**
@@ -65,7 +70,157 @@ _Bash ou PowerShell_
 deactivate
 ```
 
-## Projeto: Sistema de Casa Inteligente
+## Principais Componentes e Padrões de Design Utilizados:
+
+| Componente | Padrão de Projeto | Descrição |
+|------------|-------------------|-----------|
+| `Dispositivo` | - | Classe abstrata que define a interface para os dispositivos da casa inteligente. |
+| `ObservableDevice` | Observer | Classe que notifica mudanças de estado para os observadores. |
+| `Luz`, `Termostato`, `SistemaSeguranca` | - | Classes concretas que implementam a interface `ObservableDevice`. |
+| `Celular`, `EMail` | Observer | Classes que observam mudanças de estado nos dispositivos. |
+| `DispositivoFactory` | Factory | Classe que cria instâncias de diferentes dispositivos. |
+| `CasaInteligente` | Singleton | Classe que gerencia os dispositivos da casa inteligente. |
+| `Main` | Singleton | Classe que implementa a interface de linha de comando para interação com o sistema. |
+
+## Exemplos de Uso da CLI:
+Ao executar o projeto, a CLI exibe um menu com as opções disponíveis.
+
+```output
+== CONTROLE: Casa Inteligente ==
+[1] - ADICIONAR DISPOSITIVO
+[2] - LISTAR DISPOSITIVOS
+[3] - STATUS DOS DISPOSITIVOS
+[4] - LIGAR TODAS AS LUZES
+[5] - DESLIGAR TODAS AS LUZES
+[6] - EXIBIR LUZES ACESAS
+[7] - CONTROLAR DISPOSITIVO INDIVIDUAL
+[8] - REMOVER DISPOSITIVO
+[9] - ADICIONAR CELULAR
+[10] - ADICIONAR E-MAIL
+[0] - SAIR
+```
+
+As opções entre colchetes `[ ]` representam os números que devem ser digitados para selecionar a opção desejada.
+
+### [1] - Adicionar Dispositivo:
+Ao selecionar a opção `ADICIONAR DISPOSITIVO`, a CLI exibe as opções de dispositivos disponíveis para adicionar.
+
+```output
+[1] - LUZ
+[2] - TERMOSTATO
+[3] - SISTEMA_SEGURANCA
+```
+
+Depois de selecionar o tipo de dispositivo, a CLI solicita um nome para o dispositivo, adicionando-o à casa inteligente e retornando ao menu inicial.
+
+### [2] - Listar Dispositivos:
+A opção `LISTAR DISPOSITIVOS` exibe uma lista de todos os dispositivos na casa inteligente e seus respectivos nomes, retornando ao menu inicial em seguida.
+
+```output
+Device: Termo Friozão
+Device: Luz da Sala
+Device: Luz da Cozinha
+Device: Sistema Segurão
+```
+
+### [3] - Status dos Dispositivos:
+A opção `STATUS DOS DISPOSITIVOS` exibe o status atual de todos os dispositivos na casa inteligente, retornando ao menu inicial em seguida.
+
+```output
+Termo Friozão            DESLIGADO
+Luz da Sala              DESLIGADA
+Luz da Cozinha           DESLIGADA
+Sistema Segurão          DESARMADO
+```
+
+### [4] - Ligar Todas as Luzes:
+A opção `LIGAR TODAS AS LUZES` liga todas as luzes na casa inteligente, retornando ao menu inicial em seguida. Nenhuma saída é exibida, mas é possível verificar o status das luzes com a opção `STATUS DOS DISPOSITIVOS`.
+
+### [5] - Desligar Todas as Luzes:
+A opção `DESLIGAR TODAS AS LUZES` desliga todas as luzes na casa inteligente, retornando ao menu inicial em seguida. Nenhuma saída é exibida, mas é possível verificar o status das luzes com a opção `STATUS DOS DISPOSITIVOS`.
+
+### [6] - Exibir Luzes Acesas:
+A opção `EXIBIR LUZES ACESAS` exibe uma lista de todas as luzes que estão ligadas na casa inteligente, retornando ao menu inicial em seguida.
+
+```output
+Luz da Sala              LIGADA
+Luz da Cozinha           LIGADA
+```
+
+### [7] - Controlar Dispositivo Individual:
+A opção `CONTROLAR DISPOSITIVO INDIVIDUAL` exibe a lista de todos os dispositivos na casa inteligente, conforme a função `LISTAR DISPOSITIVOS` e solicita o nome do dispositivo que deseja controlar. Depois de selecionar o dispositivo, a CLI exibe as opções de controle referentes ao dispositivo selecionado.
+
+```output
+>> Termo Friozão
+
+[1] - AQUECER
+[2] - ESFRIAR
+[3] - DESLIGAR
+```
+
+Depois de selecionar a opção de controle, a CLI executa a ação correspondente e retorna ao menu inicial.
+
+Ao vincular dispositívos de `Celular` ou `EMail` como observadores, quando um dispositivo vinculado muda de estado, o observador é notificado.
+
+```output
+Qual dispositivo deseja controlar?
+Device: Termo Friozão
+Device: Luz da Sala
+Device: Sistema Segurão
+
+>> Sistema Segurão
+[1] - ARMAR_COM_GENTE
+[2] - ARMAR_SEM_NINGUEM
+[3] - DESARMAR
+
+>> 2
+CELULAR 9090-9090: Notificado () {'state': <SisSegState.ARMADO_SEM_NINGUEM: 'armado_sem_ninguem'>}
+E-Mail observador@email.com: Notificado () {'state': <SisSegState.ARMADO_SEM_NINGUEM: 'armado_sem_ninguem'>}
+```
+
+### [8] - Remover Dispositivo:
+A opção `REMOVER DISPOSITIVO` exibe a lista de todos os dispositivos na casa inteligente, conforme a função `LISTAR DISPOSITIVOS` e solicita o nome do dispositivo que deseja remover. Depois de selecionar o dispositivo, a CLI remove o dispositivo da casa inteligente e retorna ao menu inicial.
+
+### [9] - Adicionar Celular:
+A opção `ADICIONAR CELULAR` adiciona um celular como observador de um dos dispositivos na casa inteligente, retornando ao menu inicial em seguida. O usuário é solicitado a selecionar o dispositivo que deseja observar e a informar o número do celular.
+
+```output
+Adicionando um Celular
+Digite o número do celular a ser cadastrado.
+>> 9090-9090
+Escolha o dispositivo a ser vinculado com o celular
+Device: Termo Friozão
+Device: Luz da Sala
+Device: Sistema Segurão
+
+>> Sistema Segurão
+```
+
+Essa função permite que o dispostivo seja notificado de quaisquer mudanças de estado no dispositivo selecionado.
+
+### [10] - Adicionar E-Mail:
+A opção `ADICIONAR E-MAIL` adiciona um e-mail como observador de um dos dispositivos na casa inteligente, retornando ao menu inicial em seguida. O usuário é solicitado a selecionar o dispositivo que deseja observar e a informar o endereço de e-mail.
+
+```output
+Adicione um e-mail para receber notificações:
+>> observador@email.com
+Escolha o dispositivo a ser vinculado com o e-mail
+Device: Termo Friozão
+Device: Luz da Sala
+Device: Sistema Segurão
+
+>> Sistema Segurão
+```
+
+Essa função permite que o dispostivo seja notificado de quaisquer mudanças de estado no dispositivo selecionado.
+
+### [0] - Sair:
+A opção `SAIR` encerra a execução do programa.
+
+## Demonstração do Projeto:
+TO-DO
+
+## Enunciado - Projeto: Sistema de Casa Inteligente
 
 ### Objetivo
 O objetivo deste projeto é projetar e implementar um sistema de casa inteligente abrangente que integra vários conceitos vistos durante a disciplina, como programação orientada a objetos, padrões de projeto, máquinas de estados usando a biblioteca `transitions`, e conceitos de programação funcional, como compreensões de listas e funções como `map`, `filter` e `reduce`, além de argumentos de linha de comando.
