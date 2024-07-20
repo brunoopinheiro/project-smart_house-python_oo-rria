@@ -218,7 +218,8 @@ Essa função permite que o dispostivo seja notificado de quaisquer mudanças de
 A opção `SAIR` encerra a execução do programa.
 
 ## Demonstração do Projeto:
-TO-DO
+
+[![Vídeo de Demonstração](https://img.youtube.com/vi/uPmpGH4WUhw/0.jpg)](https://youtu.be/uPmpGH4WUhw)
 
 ## Enunciado - Projeto: Sistema de Casa Inteligente
 
